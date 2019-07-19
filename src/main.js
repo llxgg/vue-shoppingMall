@@ -18,6 +18,16 @@ import Axios from 'axios';
 Vue.prototype.axios = Axios;
 Axios.defaults.baseURL = 'http://localhost:8888/api/private/v1/';
 Axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+// 设置请求头，把token携带到服务端进行请求：
+const AUTH_TOKEN = sessionStorage.getItem('token');
+Axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
+
+// moment
+import moment from 'moment';
+// 创建全局过滤器，在new vue 前面创建
+Vue.filter('formatDate',(data) => {
+  return moment(data).format('YYYY-MM-DD')
+})
 
 /* eslint-disable no-new */
 new Vue({
