@@ -84,6 +84,8 @@
                   this.$router.push({name:'home'});
                   // alert("登录成功");
                   this.$message.success(msg);
+                  // 保存token，做路由守卫
+                  sessionStorage.setItem("token",data.token);
                 }else {
                   // 错误提示
                   this.$message.error(msg);
