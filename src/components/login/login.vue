@@ -79,13 +79,14 @@
                 } = res.data;
 
                 if(status === 200){
+                  // 保存token，做路由守卫
+                  sessionStorage.setItem("token",data.token);
+
                   // 登录成功：跳转路由到 home
                   // 提示登录成功
                   this.$router.push({name:'home'});
                   // alert("登录成功");
                   this.$message.success(msg);
-                  // 保存token，做路由守卫
-                  sessionStorage.setItem("token",data.token);
                 }else {
                   // 错误提示
                   this.$message.error(msg);

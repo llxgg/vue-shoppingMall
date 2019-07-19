@@ -7,7 +7,7 @@
         <div class="grid-content bg-purple-light"><h2>电商后台管理系统</h2></div>
       </el-col>
       <el-col :span="3">
-        <div class="grid-content bg-purple"><a class="link" href="#">退出</a></div>
+        <div class="grid-content bg-purple"><a class="link" @click.prevent="handleBack" href="#">退出</a></div>
       </el-col>
     </el-header>
 
@@ -106,7 +106,23 @@
 
 <script>
     export default {
-        name: "home"
+      name: "home",
+      data(){
+        return {
+
+        }
+      },
+      methods:{
+        // 退出
+        handleBack:function(){
+          // 1. 清除token
+          // 2. 提示用户信息
+          // 3. 跳转到login页面
+          sessionStorage.removeItem("token");
+          this.$message.success('退出成功');
+          this.$router.replace({name:'login'});
+        }
+      }
     }
 </script>
 
