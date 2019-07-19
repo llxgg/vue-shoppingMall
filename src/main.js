@@ -6,10 +6,18 @@ import router from './router';
 
 Vue.config.productionTip = false;
 
+import '../static/css/reset.css'
+
 // Element-ui
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(ElementUI);
+
+// axios
+import Axios from 'axios';
+Vue.prototype.axios = Axios;
+Axios.defaults.baseURL = 'http://localhost:8888/api/private/v1/';
+Axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 /* eslint-disable no-new */
 new Vue({
