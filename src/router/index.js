@@ -7,6 +7,8 @@ import Login from '@/components/login/login.vue';
 import Home from '@/components/home/home.vue';
 import ErrorHtml from '@/components/error/error.vue';
 
+import Users from '@/components/user/user.vue';
+
  const router = new Router({
   mode:"history",
   routes: [
@@ -19,7 +21,14 @@ import ErrorHtml from '@/components/error/error.vue';
     {
       name:'home',
       path:'/home',
-      component:Home
+      component:Home,
+      children:[
+        {
+          name:'users',
+          path:'users',
+          component:Users
+        }
+      ]
     },
     {path:'*',component:ErrorHtml}
   ],

@@ -16,6 +16,7 @@
       <!--左侧-->
       <el-aside class="aside" width="200px">
         <el-menu
+          :router="true"
           :unique-opened="true"
         >
           <!--用户管理-->
@@ -25,7 +26,7 @@
               <span>用户管理</span>
             </template>
 
-            <el-menu-item index="1-1">
+            <el-menu-item index="/home/users">
               <i class="el-icon-s-tools"></i>
               <span>用户列表</span>
             </el-menu-item>
@@ -97,8 +98,11 @@
 
         </el-menu>
       </el-aside>
+
       <!--右侧-->
-      <el-main class="main">Main</el-main>
+      <el-main class="main">
+        <router-view></router-view>
+      </el-main>
     </el-container>
 
   </el-container>
