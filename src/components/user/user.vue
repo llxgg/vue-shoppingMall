@@ -61,14 +61,29 @@
 
 
 
-        <el-table-column
-          prop="mg_state"
-          label="用户状态">
+        <el-table-column label="用户状态">
+          <!-- 单元格内，不能随便使用其他组件。 -->
+          <!-- 如果想要使用其他组件，则外层用template 组件包裹，把外层的数据通过 template的自带属性：slot-scope传递到template内部，传递的是数据源，所以要通过该数据源.row 得到每一条数据 -->
+          <template slot-scope="userslist">
+            <el-switch
+              v-model="userslist.row.mg_state"
+              active-color="#13ce66"
+              inactive-color="#ff4949">
+            </el-switch>
+          </template>
+
         </el-table-column>
 
-        <el-table-column
-          prop="address"
-          label="操作">
+
+
+        <el-table-column label="操作">
+
+          <template slot-scope="userslist">
+            <el-button size="mini" plain type="primary" icon="el-icon-edit" circle></el-button>
+            <el-button size="mini" plain type="danger" icon="el-icon-delete" circle></el-button>
+            <el-button size="mini" plain type="success" icon="el-icon-check" circle></el-button>
+          </template>
+
         </el-table-column>
       </el-table>
 
