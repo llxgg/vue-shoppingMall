@@ -9,6 +9,9 @@ import ErrorHtml from '@/components/error/error.vue';
 
 import Users from '@/components/user/user.vue';
 
+import Role from '@/components/power/role.vue';
+import Power from '@/components/power/power.vue';
+
  const router = new Router({
   mode:"history",
   routes: [
@@ -27,6 +30,16 @@ import Users from '@/components/user/user.vue';
           name:'users',
           path:'users',
           component:Users
+        },
+        {
+          name:"role",
+          path:'role',
+          component:Role
+        },
+        {
+          name:"power",
+          path:'power',
+          component:Power
         }
       ]
     },
