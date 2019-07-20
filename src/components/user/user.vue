@@ -82,7 +82,7 @@
           <template slot-scope="userslist">
             <el-button size="mini" plain type="primary" icon="el-icon-edit" circle @click="editItem(userslist.row.id)"></el-button>
             <el-button size="mini" plain type="danger" icon="el-icon-delete" circle @click="removeUser(userslist.row.id)"></el-button>
-            <el-button size="mini" plain type="success" icon="el-icon-check" circle></el-button>
+            <el-button size="mini" plain type="success" icon="el-icon-check" circle @click="changeRole(userslist.row.id)"></el-button>
           </template>
 
         </el-table-column>
@@ -158,6 +158,32 @@
         </span>
       </el-dialog>
 
+      <!-- 更改用户角色 -->
+      <el-dialog
+        title="分配角色"
+        :visible.sync="setRoleDialogVisible"
+        width="50%">
+
+        <el-form ref="setRoleFormRef" :model="setRoleForm" label-width="80px">
+          <el-form-item label="角色名称">
+            {{setRoleForm.userName}}
+          </el-form-item>
+
+          <!-- 注意：select绑定的数据 如果 === option的数据，则select显示对应的option的值 -->
+          <el-form-item label="角色">
+            {{currentRid}}
+            <el-select v-model="currentRid" placeholder="请选择">
+              <el-option label="请选择" :value="-1"></el-option>
+              <el-option v-for="(item,index) in ridList" :key="index" :label="item.roleName" :value="item.id"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
+
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="setRoleDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="setRoleSave">确 定</el-button>
+        </span>
+      </el-dialog>
     </el-card>
 </template>
 
@@ -238,8 +264,17 @@
               { required: true, message: '请输入手机号', trigger: 'blur' },
               { validator: checkMobile, trigger: 'blur' }
             ]
-          }
+          },
 
+
+          // 更改用户角色：
+          setRoleDialogVisible:false,
+          currentRid : -1, // select绑定的数据
+          currentId:-1, // 用户的id
+          ridList:[], // 角色
+          setRoleForm:{
+            userName:""
+          }
         }
       },
 
@@ -247,6 +282,39 @@
         this.getUserList();
       },
       methods:{
+
+        // 更改用户角色：
+        async changeRole(id){
+          // console.log(id);
+
+          // 根据 id 获取角色rid 的值
+         const res = await this.axios.get(`users/${id}`);
+         // console.log(res);
+         const {meta,data} = res.data;
+         this.setRoleForm.userName = data.username;
+         this.currentRid = data.rid;
+         this.currentId = data.id;
+
+         // 根据 rid 的数值，获取对应的文字：
+         const result = await this.axios.get(`roles`);
+         this.ridList = result.data.data;
+
+          this.setRoleDialogVisible = true;
+        },
+        // 确定更改用户角色：
+        async setRoleSave(){
+          const res = await this.axios.put(`users/${this.currentId}/role`,{
+            rid:this.currentRid
+          });
+          const {meta:{status,msg},data} = res.data;
+          if(status === 200){
+            this.$message.success("分配角色成功");
+            // 关闭对话框
+            this.setRoleDialogVisible = false;
+          }
+        },
+
+
 
         // 删除用户：
         async removeUser(id){
