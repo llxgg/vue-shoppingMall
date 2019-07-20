@@ -28,7 +28,7 @@
                 :key="itemOne.id"
                 :class="['borderBottom',indexOne === 0 ? 'borderTop' : '']">
                 <el-col :span="4">
-                  <el-tag closable>{{itemOne.authName}}</el-tag>
+                  <el-tag closable @close="deleteRole(roleList.row,itemOne.id)">{{itemOne.authName}}</el-tag>
                   <i class="el-icon-caret-right"></i>
                 </el-col>
 
@@ -39,13 +39,18 @@
                     :class="['borderTop',indexTwo === 0 ? 'borderNone' : '']">
                     <!-- 二级 -->
                     <el-col :span="5">
-                      <el-tag closable type="success">{{itemTwo.authName}}</el-tag>
+                      <el-tag closable type="success" @close="deleteRole(roleList.row,itemTwo.id)">{{itemTwo.authName}}</el-tag>
                       <i class="el-icon-caret-right"></i>
                     </el-col>
 
                     <el-col :span="19">
                       <!-- 三级 -->
-                      <el-tag closable type="warning" v-for="itemThree in itemTwo.children">{{itemThree.authName}}</el-tag>
+                      <el-tag
+                        closable
+                        type="warning"
+                        v-for="itemThree in itemTwo.children"
+                        :key="itemThree.id"
+                        @close="deleteRole(roleList.row,itemThree.id)">{{itemThree.authName}}</el-tag>
                     </el-col>
                   </el-row>
                 </el-col>
@@ -178,7 +183,36 @@
       },
       methods:{
 
-        // 删除：
+        // 删除权限：
+        async deleteRole(row,rightId){
+          // console.log(row);
+      const confirmResult = await this.$confirm('此操作将永久删除该权限, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).catch(err => err);
+
+      if(confirmResult !== 'confirm'){
+        return this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      }
+
+      const res = await this.axios.delete(`roles/${row.id}/rights/${rightId}`);
+      const {meta:{status,msg},data} = res.data;
+      if(status === 200){
+        this.$message.success("删除权限成功");
+        // 更新数据 ---注意：返回的是删除后的 权限数据，所以可以直接赋值给 roleList.row.children
+        // this.getRoleList(); // 会整个页面刷新，权限列表收起
+        // 可以 把返回的数据 赋值给 roleList.row.children --- 所以在传递参数的时候，直接传roleList.row
+        row.children = data;
+      }else {
+        this.$message.error("删除权限失败");
+      }
+    },
+
+        // 删除角色：
         async removeRole(id){
           const confirmResult = await this.$confirm('此操作将永久删除该角色, 是否继续?', '提示', {
             confirmButtonText: '确定',
