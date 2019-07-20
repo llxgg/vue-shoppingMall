@@ -55,6 +55,8 @@
                   </el-row>
                 </el-col>
               </el-row>
+
+              <span v-if="roleList.row.children.length === 0">没有分配权限</span>
             </template>
           </el-table-column>
 
@@ -85,7 +87,7 @@
 
               <el-button type="danger" icon="el-icon-delete" size="mini" @click="removeRole(roleList.row.id)">删除</el-button>
 
-              <el-button type="warning" icon="el-icon-setting" size="mini">分配权限</el-button>
+              <el-button type="warning" icon="el-icon-setting" size="mini" @click="setRole(roleList.row)">分配权限</el-button>
             </template>
 
           </el-table-column>
@@ -136,6 +138,33 @@
         </span>
       </el-dialog>
 
+      <!-- 分配权限 -->
+      <el-dialog
+        title="分配权限"
+        :visible.sync="setRoleDialogVisible"
+        width="50%">
+
+        <!--tree 树形-->
+        <!--:default-expanded-keys="[2, 3]"  如果不用数组的，
+        可以使用快捷方式：:default-expanded-all 默认展开全部层级，不需要遍历数据取得每一项的id-->
+
+        <!--:default-checked-keys="[5]" 需要选中显示的权限id，是一个数组，把有的权限的id存储起来 -->
+        <!-- node-key="id" 是层级目录对应的id属性 --- 也就是 key -->
+        <el-tree
+          :data="roleListTree"
+          show-checkbox
+          node-key="id"
+          :default-expanded-keys="roleListId"
+          :default-checked-keys="checkedRoleId"
+          ref="tree"
+          :props="defaultProps">
+        </el-tree>
+
+        <span slot="footer" class="dialog-footer">
+    <el-button @click="setRoleDialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="saveRole()">确 定</el-button>
+  </span>
+      </el-dialog>
 
     </el-card>
 </template>
@@ -175,7 +204,19 @@
             roleDesc: [
               { required: true, message: '请输入角色描述', trigger: 'blur' }
             ]
-          }
+          },
+
+
+          // 分配权限：
+          setRoleDialogVisible:false,
+          roleListTree:[], // tree 结构上的数据
+          roleListId:[], // 根据权限id 自动展开所有权限
+          checkedRoleId:[], // 选中的权限的id
+          defaultProps: {
+            children: 'children', // 层级数据，都是基于 children往下一层查找的
+            label: 'authName' // tree结构显示的名称
+          },
+          RoleId: -1 //角色id,在保存角色权限的时候需要用到。
         }
       },
       created(){
@@ -183,34 +224,114 @@
       },
       methods:{
 
-        // 删除权限：
+        // tree 权限树：
+        async setRole(row){
+          this.RoleId = row.id;
+
+          // 获取 tree 树形结构的 权限数据：
+          const res = await this.axios.get(`rights/tree`);
+
+          const {meta:{status,msg},data} = res.data;
+          if(status === 200){
+            this.roleListTree = data; // 把得到的数据 保存到 控件需要的数组中
+
+            // 把数据遍历，取所有权限的id存储到一个数组中，
+            // :default-expanded-keys="[2, 3]"  然后会自动展开每一项
+            var arrTemp1 = [];
+            data.forEach((item1,i) => {
+              arrTemp1.push(item1.id);
+              item1.children.forEach(item2 => {
+                arrTemp1.push(item2.id);
+                item2.children.forEach(item3 => {
+                  arrTemp1.push(item3.id);
+                })
+              })
+            })
+            this.roleListId = arrTemp1;
+
+
+            // 获取角色对应的 权限，然后遍历取选中的权限的id到一个数组中。
+            // 角色对应的权限 --- 需要在 点击这个按钮的时候，传递进来。
+            // 注意：因为tree 树形控件 只要内部有选中的，则外部的都会自动选中，不管是全选还是半选，反之，如果外部选中，则里面的都会全选，这就产生 BUG了
+            // 因为内部 有些不可能全选的，但是你把 外部的 id也放到数组中渲染，则默认会以为外部选中，则内部全选。
+            // 所以不需要把 外部的 id 放到数组中，只需要把 最内部的id放到数组就行，外部会自动全选/半选。
+            // console.log(row);
+            var arrTemp2 = [];
+            row.children.forEach(item1 => {
+              // arrTemp2.push(item1.id);
+              item1.children.forEach(item2 => {
+                // arrTemp2.push(item2.id);
+                item2.children.forEach(item3 => {
+                  arrTemp2.push(item3.id);
+                })
+              })
+            })
+            this.checkedRoleId = arrTemp2;
+          }
+
+          // 点击，显示对话框：
+          this.setRoleDialogVisible = true;
+        },
+        async saveRole(){
+          // 保存 tree 中更改的 权限
+          // api 接口文档：角色管理 --- 角色授权 ---> 需要 角色id 和 权限 ID 列表
+          // 权限id 分为： 全选的id 和半选 的id
+          // 全选：getCheckedKeys()   --- 返回一个 全选的 id数组
+          // 半选：getHalfCheckedKeys() ---- 返回一个 半选的 id数组
+          // 怎么使用这两个方法？？ 因为是 tree组件上的方法，所以直接 ref获取tree组件然后调用就行
+
+          // 全选：arr1
+          let arr1 = this.$refs.tree.getCheckedKeys();
+          // 半选： arr2
+          let arr2 = this.$refs.tree.getHalfCheckedKeys();
+
+          // 拼接成一个数组：arr
+          let arr = [...arr1, ...arr2]; // 展开运算符
+
+          // 请求：参数 rids 权限id列表，以 , 分割的权限 ID 列表
+          const res = await this.axios.post(`roles/${this.RoleId}/rights`,{rids:arr.join(',')});
+          const {meta:{status,msg},data} = res.data;
+          if(status === 200){
+            this.$message.success("更改权限成功")
+            // 更新视图数据
+            this.getRoleList();
+            // 关闭对话框：
+            this.setRoleDialogVisible = false;
+          }
+        },
+
+
+
+        // 删除list 的权限：
         async deleteRole(row,rightId){
           // console.log(row);
-      const confirmResult = await this.$confirm('此操作将永久删除该权限, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).catch(err => err);
+          const confirmResult = await this.$confirm('此操作将永久删除该权限, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).catch(err => err);
 
-      if(confirmResult !== 'confirm'){
-        return this.$message({
-          type: 'info',
-          message: '已取消删除'
-        });
-      }
+          if(confirmResult !== 'confirm'){
+            return this.$message({
+              type: 'info',
+              message: '已取消删除'
+            });
+          }
 
-      const res = await this.axios.delete(`roles/${row.id}/rights/${rightId}`);
-      const {meta:{status,msg},data} = res.data;
-      if(status === 200){
-        this.$message.success("删除权限成功");
-        // 更新数据 ---注意：返回的是删除后的 权限数据，所以可以直接赋值给 roleList.row.children
-        // this.getRoleList(); // 会整个页面刷新，权限列表收起
-        // 可以 把返回的数据 赋值给 roleList.row.children --- 所以在传递参数的时候，直接传roleList.row
-        row.children = data;
-      }else {
-        this.$message.error("删除权限失败");
-      }
-    },
+          const res = await this.axios.delete(`roles/${row.id}/rights/${rightId}`);
+          const {meta:{status,msg},data} = res.data;
+          if(status === 200){
+            this.$message.success("删除权限成功");
+            // 更新数据 ---注意：返回的是删除后的 权限数据，所以可以直接赋值给 roleList.row.children
+            // this.getRoleList(); // 会整个页面刷新，权限列表收起
+            // 可以 把返回的数据 赋值给 roleList.row.children --- 所以在传递参数的时候，直接传roleList.row
+            row.children = data;
+          }else {
+            this.$message.error("删除权限失败");
+          }
+        },
+
+
 
         // 删除角色：
         async removeRole(id){
@@ -226,6 +347,9 @@
             const res = await this.axios.delete('roles/' + id);
 
             const {meta:{status,msg},data} = res.data;
+
+            console.log(res);
+
             if(status === 200){
               this.$message.success("删除角色成功");
               // 更新列表
@@ -239,8 +363,6 @@
             });
           }
         },
-
-
 
         // 编辑角色，传递id
         async editItem(id){
