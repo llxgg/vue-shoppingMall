@@ -16,6 +16,45 @@
           border
           stripe
           style="width: 100%;margin-top:15px;">
+
+          <!-- 展开：给对应的列设置 type="expand"; 里面的内容用 template包裹 -->
+          <el-table-column
+            type="expand"
+            width="60">
+
+            <template slot-scope="roleList">
+              <el-row
+                v-for="(itemOne,indexOne) in roleList.row.children"
+                :key="itemOne.id"
+                :class="['borderBottom',indexOne === 0 ? 'borderTop' : '']">
+                <el-col :span="4">
+                  <el-tag closable>{{itemOne.authName}}</el-tag>
+                  <i class="el-icon-caret-right"></i>
+                </el-col>
+
+                <el-col :span="20">
+                  <el-row
+                    v-for="(itemTwo,indexTwo) in itemOne.children"
+                    :key="itemTwo.id"
+                    :class="['borderTop',indexTwo === 0 ? 'borderNone' : '']">
+                    <!-- 二级 -->
+                    <el-col :span="5">
+                      <el-tag closable type="success">{{itemTwo.authName}}</el-tag>
+                      <i class="el-icon-caret-right"></i>
+                    </el-col>
+
+                    <el-col :span="19">
+                      <!-- 三级 -->
+                      <el-tag closable type="warning" v-for="itemThree in itemTwo.children">{{itemThree.authName}}</el-tag>
+                    </el-col>
+                  </el-row>
+                </el-col>
+              </el-row>
+            </template>
+          </el-table-column>
+
+
+          <!-- 索引 -->
           <el-table-column
             type="index"
             width="60">
@@ -167,7 +206,7 @@
           }
         },
 
-    
+
 
         // 编辑角色，传递id
         async editItem(id){
@@ -246,5 +285,23 @@
 </script>
 
 <style scoped>
+.borderBottom {
+  border-bottom: 1px solid #ddd;
+}
+.borderTop {
+  border-top: 1px solid #ddd;
+}
+.el-tag {
+    margin: 10px;
+  }
+  .borderNone {
+    border:none;
+  }
 
+  .el-col {
+    white-space: nowrap;
+  }
+  .el-col-19 {
+    white-space: normal;
+  }
 </style>
