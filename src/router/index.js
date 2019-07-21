@@ -32,13 +32,13 @@ import Power from '@/components/power/power.vue';
           component:Users
         },
         {
-          name:"role",
-          path:'role',
+          name:"roles",
+          path:'roles',
           component:Role
         },
         {
-          name:"power",
-          path:'power',
+          name:"rights",
+          path:'rights',
           component:Power
         }
       ]
