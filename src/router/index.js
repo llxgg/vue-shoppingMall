@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import { Message } from 'element-ui';
 Vue.use(Router);
 
 // @ 代表 src这一层目录
@@ -38,7 +39,8 @@ const tokenStr = sessionStorage.getItem('token');
 if (tokenStr) return next();
 
 // 否则，强制跳转到登录页
-next('/login')
+next('/login');
+Message.warning("请先登录");
 })
 
 export default router;
