@@ -20,81 +20,19 @@
           :unique-opened="true"
         >
           <!--用户管理-->
-          <el-submenu index="1">
+          <el-submenu v-for="item1 in menus" :key="item1.id" :index="'' + item1.order">
             <template slot="title">
               <i class="el-icon-menu"></i>
-              <span>用户管理</span>
+              <span>{{item1.authName}}</span>
             </template>
 
-            <el-menu-item index="/home/users">
+            <el-menu-item :index="'/home/'+ item2.path" v-for="item2 in item1.children" :key="item2.id">
               <i class="el-icon-s-tools"></i>
-              <span>用户列表</span>
+              <span>{{item2.authName}}</span>
             </el-menu-item>
           </el-submenu>
 
-          <!--权限管理-->
-          <el-submenu index="2">
-            <template slot="title">
-              <i class="el-icon-menu"></i>
-              <span>权限管理</span>
-            </template>
 
-            <el-menu-item index="/home/role">
-              <i class="el-icon-user-solid"></i>
-              <span>角色列表</span>
-            </el-menu-item>
-            <el-menu-item index="/home/power">
-              <i class="el-icon-user-solid"></i>
-              <span>权限列表</span>
-            </el-menu-item>
-          </el-submenu>
-
-          <!--商品管理-->
-          <el-submenu index="3">
-            <template slot="title">
-              <i class="el-icon-menu"></i>
-              <span>商品管理</span>
-            </template>
-
-            <el-menu-item index="3-1">
-              <i class="el-icon-s-tools"></i>
-              <span>商品列表</span>
-            </el-menu-item>
-            <el-menu-item index="3-2">
-              <i class="el-icon-s-tools"></i>
-              <span>分类参数</span>
-            </el-menu-item>
-            <el-menu-item index="3-3">
-              <i class="el-icon-s-tools"></i>
-              <span>商品分类</span>
-            </el-menu-item>
-          </el-submenu>
-
-          <!--订单管理-->
-          <el-submenu index="4">
-            <template slot="title">
-              <i class="el-icon-s-tools"></i>
-              <span>订单管理</span>
-            </template>
-
-            <el-menu-item index="4-1">
-              <i class="el-icon-s-tools"></i>
-              <span>订单列表</span>
-            </el-menu-item>
-          </el-submenu>
-
-          <!--数据统计-->
-          <el-submenu index="5">
-            <template slot="title">
-              <i class="el-icon-menu"></i>
-              <span>数据统计</span>
-            </template>
-
-            <el-menu-item index="5-1">
-              <i class="el-icon-s-tools"></i>
-              <span>数据列表</span>
-            </el-menu-item>
-          </el-submenu>
 
         </el-menu>
       </el-aside>
@@ -113,10 +51,21 @@
       name: "home",
       data(){
         return {
-
+          menus:[]
         }
       },
+      created(){
+        this.getMenusList();
+      },
       methods:{
+        // 左侧菜单栏渲染：
+        async getMenusList(){
+          const res = await this.axios.get(`menus`);
+          console.log(res);
+
+          this.menus = res.data.data;
+        },
+
         // 退出
         handleBack:function(){
           // 1. 清除token
