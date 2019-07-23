@@ -450,8 +450,8 @@
         // 请求用户列表数据
         async getUserList(){
           // 设置请求头：token
-          const AUTH_TOKEN = sessionStorage.getItem('token');
-          this.axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
+          // const AUTH_TOKEN = sessionStorage.getItem('token');
+          // this.axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
           const res = await this.axios.get(`users?query=${this.query}&pagenum=${this.pagenum}&pagesize=${this.pagesize}`);
 

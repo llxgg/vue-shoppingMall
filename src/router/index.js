@@ -13,6 +13,13 @@ import Users from '@/components/user/user.vue';
 import Role from '@/components/power/role.vue';
 import Power from '@/components/power/power.vue';
 
+import goods from '@/components/goods/goods.vue';
+import goodList from '@/components/goods/goodList.vue';
+import goodAdd from '@/components/goods/goodAdd.vue';
+import Categories from '@/components/goods/categories.vue';
+import Params from '@/components/goods/params.vue';
+
+
  const router = new Router({
   mode:"history",
   routes: [
@@ -41,6 +48,34 @@ import Power from '@/components/power/power.vue';
           name:"rights",
           path:'rights',
           component:Power
+        },
+        {
+          name:"goods",
+          path:'goods',
+          redirect:'goods/list',
+          component:goods,
+          children:[
+            {
+              name:'list',
+              path:'list',
+              component:goodList
+            },
+            {
+              name:'add',
+              path:'add',
+              component:goodAdd
+            },
+          ]
+        },
+        {
+          name:"categories",
+          path:'categories',
+          component:Categories
+        },
+        {
+          name:"params",
+          path:'params',
+          component:Params
         }
       ]
     },

@@ -50,6 +50,20 @@ Vue.filter('formatDate',(data) => {
   return moment(data).format('YYYY-MM-DD')
 })
 
+
+// vue-table-with-tree-grid
+import treeGrid from 'vue-table-with-tree-grid';
+Vue.component('tree-table',treeGrid); //注册为全局，并自定义组件标签为 tree-table
+
+
+// 富文本
+import VueQuillEditor from 'vue-quill-editor';
+import 'quill/dist/quill.core.css';
+import 'quill/dist/quill.snow.css';
+import 'quill/dist/quill.bubble.css';
+Vue.use(VueQuillEditor);
+
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
