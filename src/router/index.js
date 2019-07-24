@@ -20,7 +20,9 @@ import Categories from '@/components/goods/categories.vue';
 import Params from '@/components/goods/params.vue';
 
 
-import Orders from '@/components/order/orders.vue'
+import Orders from '@/components/order/orders.vue';
+
+import Reports from '@/components/reports/reports.vue';
 
 
  const router = new Router({
@@ -84,6 +86,11 @@ import Orders from '@/components/order/orders.vue'
           name:"orders",
           path:'orders',
           component:Orders
+        },
+        {
+          name:"reports",
+          path:'reports',
+          component:Reports
         },
       ]
     },
