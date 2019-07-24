@@ -20,6 +20,9 @@ import Categories from '@/components/goods/categories.vue';
 import Params from '@/components/goods/params.vue';
 
 
+import Orders from '@/components/order/orders.vue'
+
+
  const router = new Router({
   mode:"history",
   routes: [
@@ -76,7 +79,12 @@ import Params from '@/components/goods/params.vue';
           name:"params",
           path:'params',
           component:Params
-        }
+        },
+        {
+          name:"orders",
+          path:'orders',
+          component:Orders
+        },
       ]
     },
     {path:'*',component:ErrorHtml}

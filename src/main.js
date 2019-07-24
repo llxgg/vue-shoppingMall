@@ -47,7 +47,7 @@ Axios.interceptors.response.use(function (response) {
 import moment from 'moment';
 // 创建全局过滤器，在new vue 前面创建
 Vue.filter('formatDate',(data) => {
-  return moment(data).format('YYYY-MM-DD')
+  return moment(data).format('YYYY-MM-DD hh:mm:ss')
 })
 
 
