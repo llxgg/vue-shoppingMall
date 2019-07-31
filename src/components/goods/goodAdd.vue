@@ -21,7 +21,7 @@
       </el-steps>
 
       <!-- 标签页,注意：是整个标签页的内容都填写完毕才提交的，所以应该放在一个form标签中 -->
-      <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="100px">
+      <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="150px">
         <el-tabs tab-position="left" v-model="activeName" :before-leave="disabledSlide">
 
           <el-tab-pane label="基本信息" name="0">
@@ -129,7 +129,8 @@
             goods_cat:[], // 选中后的select数据
             goods_introduce:'', // 商品的描述，也就是富文本
             pics:[], // 添加商品的时候，需要这两个数组
-            attrs:[] // 商品的属性数组
+            attrs:[], // 商品的属性数组
+            add_time:new Date().getTime()
           },
           //校验
           addFormRules:{
@@ -219,6 +220,7 @@
         handlePreview(result){
           this.showImgDialogVisible = true;
           this.showImgUrl = result.response.data.url;
+          console.log(result.response.data.url);
         },
         // 图片上传成功，记录图片的信息到 addForm.pics数组中：
         // 怼出一个对象：  {"pic":"/tmp_uploads/30f08d52c551ecb447277eae232304b8"}
@@ -349,6 +351,11 @@
     margin-right: 8px;
   }
   .ql-editor {
-    height:300px;
+    height:300px!important;
   }
+
+.el-form-item__label {
+  text-align: left!important;
+  float: none!important;
+}
 </style>

@@ -21,12 +21,13 @@
 
       <!--表格-->
       <el-table
+        border
         :data="userslist"
         style="width: 100%">
+
         <el-table-column
           label="#"
-          type="index"
-          width="60">
+          type="index">
         </el-table-column>
 
         <el-table-column
@@ -43,14 +44,16 @@
 
         <el-table-column
           prop="mobile"
-          label="电话">
+          label="电话"
+        width="180">
         </el-table-column>
 
 
 
         <el-table-column
           prop="create_time"
-          label="创建日期">
+          label="创建日期"
+        width="220">
 
           <!-- 单元格内部只能写文本数据，如果想要使用插值表达式，则需要使用template组件 -->
           <template slot-scope="userslist">
@@ -61,7 +64,7 @@
 
 
 
-        <el-table-column label="用户状态">
+        <el-table-column label="用户状态" width="100">
           <!-- 单元格内，不能随便使用其他组件。 -->
           <!-- 如果想要使用其他组件，则外层用template 组件包裹，把外层的数据通过 template的自带属性：slot-scope传递到template内部，传递的是数据源，所以要通过该数据源.row 得到每一条数据 -->
           <template slot-scope="userslist">
@@ -77,7 +80,7 @@
 
 
 
-        <el-table-column label="操作" width="150">
+        <el-table-column label="操作" width="200">
 
           <template slot-scope="userslist">
             <el-button size="mini" plain type="primary" icon="el-icon-edit" circle @click="editItem(userslist.row.id)"></el-button>
@@ -171,7 +174,6 @@
 
           <!-- 注意：select绑定的数据 如果 === option的数据，则select显示对应的option的值 -->
           <el-form-item label="角色">
-            {{currentRid}}
             <el-select v-model="currentRid" placeholder="请选择">
               <el-option label="请选择" :value="-1"></el-option>
               <el-option v-for="(item,index) in ridList" :key="index" :label="item.roleName" :value="item.id"></el-option>

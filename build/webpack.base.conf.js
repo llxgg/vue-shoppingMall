@@ -38,6 +38,14 @@ module.exports = {
       '@': resolve('src'),
     }
   },
+  externals: {
+    // 要导入的包名: 全局对象的名称
+    vue: 'Vue',
+    'vue-router': 'VueRouter',
+    axios: 'axios',
+    lodash: '_',
+    echarts: 'echarts'
+  },
   module: {
     rules: [
       // ...(config.dev.useEslint ? [createLintingRule()] : []),

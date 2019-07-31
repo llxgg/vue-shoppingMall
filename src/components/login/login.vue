@@ -5,7 +5,6 @@
         status-icon
         :rules="rules"
         ref="ruleForm"
-        label-width="100px"
         class="demo-ruleForm">
         <el-form-item label="用户名" prop="name">
           <el-input type="text" v-model="ruleForm.name" autocomplete="off"></el-input>

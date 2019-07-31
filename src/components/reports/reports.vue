@@ -15,6 +15,7 @@
 
 <script>
     import echarts from 'echarts';
+    import _ from 'lodash'; // 引入 lodash插件，_ 作为入口，相当于 jquery的$
     export default {
       data(){
         return {
